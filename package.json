@@ -10,6 +10,14 @@
   "keywords": ["gobble", "gobble-plugin", "pug", "template"],
   "author": "Carlos Precioso",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cprecioso/gobble-pug-template.git"
+  },
+  "bugs": {
+    "url": "https://github.com/cprecioso/gobble-pug-template/issues"
+  },
+  "homepage": "https://github.com/cprecioso/gobble-pug-template#readme",
   "files": [
     "lib/"
   ],
