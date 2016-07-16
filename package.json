@@ -1,13 +1,18 @@
 {
   "name": "gobble-pug-template",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Create a file tree with some pug templates and a file template",
   "main": "index.js",
   "scripts": {
     "build": "rm -r lib/; coffee -cbo lib/ src/",
     "watch": "rm -r lib/; coffee -cbwmo lib/ src/"
   },
-  "keywords": ["gobble", "gobble-plugin", "pug", "template"],
+  "keywords": [
+    "gobble",
+    "gobble-plugin",
+    "pug",
+    "template"
+  ],
   "author": "Carlos Precioso",
   "license": "MIT",
   "repository": {
