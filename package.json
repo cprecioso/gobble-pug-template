@@ -1,16 +1,28 @@
 {
   "name": "gobble-pug-template",
-  "version": "1.0.0",
-  "description": "",
+  "version": "2.0.0",
+  "description": "Create a file tree with some pug templates and a file template",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rm -r lib/; coffee -cbo lib/ src/",
+    "watch": "rm -r lib/; coffee -cbwmo lib/ src/"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["gobble", "gobble-plugin", "pug", "template"],
+  "author": "Carlos Precioso",
+  "license": "MIT",
+  "files": [
+    "lib/"
+  ],
   "dependencies": {
+    "co": "^4.6.0",
+    "lodash.memoize": "^4.1.0",
     "pug": "^2.0.0-beta3",
     "sander": "^0.5.1"
+  },
+  "devDependencies": {
+    "coffee-script": "^1.10.0"
+  },
+  "engines": {
+    "node": ">=5"
   }
 }
