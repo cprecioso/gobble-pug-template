@@ -1,37 +1,43 @@
 pug = require "pug"
 sander = require "sander"
 memoize = require "lodash.memoize"
-{wrap: async} = require "co"
-{resolve} = require("path")
+{resolve} = require "path"
 
 deleteReturn = (obj) -> (prop) ->
   ret = obj[prop]
   delete obj[prop]
   ret
 
+readFile = (basedir) ->
+  (path...) -> Promise.resolve sander.readFile basedir, path..., encoding: "utf8"
+
+writeFile = (basedir) ->
+  (path..., content) -> Promise.resolve sander.writeFile basedir, path..., content, encoding: "utf8"
+
 compilePugFile = (basedir, options = {}) ->
-  memoize async (filename) ->
-    source = yield sander.readFile basedir, filename, encoding: "utf8"
-    pug.compile source, Object.assign {}, options, {filename: resolve basedir, filename}
+  reader = readFile basedir
+  memoize (path...) ->
+    filename = resolve process.cwd(), basedir, path...
+    reader path...
+    .then (source) -> pug.compile source, Object.assign {}, options, {filename}
 
-pugTemplate = async (inputdir, outputdir, options) ->
-  fromOptions = deleteReturn options
-
-  dataFile = JSON.parse yield sander.readFile inputdir, fromOptions("dataFile"), encoding: "utf8"
-  commonData = (fromOptions "commonData") ? {}
-  outputFn = fromOptions "outputFn"
-
-  compiler = compilePugFile inputdir, options
-
-  iterator = outputFn dataFile
-  until (iteration = iterator.next()).done
-    {template, path, data} = iteration.value
-
-    throw new Error "You must yield the file.template" unless template?
-    throw new Error "You must yield the file.path" unless path?
+module.exports = class pugTemplate
+  constructor: (inputdir, outputdir, options) ->
+    fromOptions = deleteReturn options
+    commonData = fromOptions("commonData") ? {}
+    outputFn = fromOptions("outputFn")
+    dataFilePath = fromOptions("dataFile")
+    compiler = compilePugFile inputdir, options
+    reader = readFile inputdir
+    writer = writeFile outputdir
     
-    data = Object.assign({}, data ? {}, commonData)
-
-    yield sander.writeFile outputdir, path, (yield compiler template)(data), encoding: "utf8"
-
-module.exports = pugTemplate
+    return reader dataFilePath
+    .then (str) -> JSON.parse str
+    .then (dataFile) ->
+      for {template, path, data} in Array.from outputFn dataFile
+        throw new Error "You must yield the file.template" unless template?
+        throw new Error "You must yield the file.path" unless path?
+        data = Object.assign({}, data ? {}, commonData)
+        Promise.all([compiler(template), data, path])
+        .then ([compile, data, path]) -> sander.writeFile outputdir, path, compile(data), encoding: "utf8"
+    .then (arr) -> Promise.all arr
