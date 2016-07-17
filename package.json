@@ -1,6 +1,6 @@
 {
   "name": "gobble-pug-template",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Create a file tree with some pug templates and a file template",
   "main": "lib/index.js",
   "scripts": {
