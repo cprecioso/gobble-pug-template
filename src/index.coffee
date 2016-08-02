@@ -37,7 +37,7 @@ module.exports = class pugTemplate
       for {template, path, data} in Array.from outputFn dataFile
         throw new Error "You must yield the file.template" unless template?
         throw new Error "You must yield the file.path" unless path?
-        data = Object.assign({}, data ? {}, commonData)
+        data = Object.assign({}, dataFile, data ? {}, commonData)
         Promise.all([compiler(template), data, path])
         .then ([compile, data, path]) -> sander.writeFile outputdir, path, compile(data), encoding: "utf8"
     .then (arr) -> Promise.all arr
